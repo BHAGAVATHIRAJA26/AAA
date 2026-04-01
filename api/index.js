@@ -24,8 +24,14 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const connectDB = async () => {
     if (mongoose.connection.readyState >= 1) return;
-    try { await mongoose.connect(process.env.MONGODB_URI); }
-    catch (err) { console.error("DB Error:", err.message); }
+    try { 
+        if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI missing in ENV");
+        await mongoose.connect(process.env.MONGODB_URI); 
+    }
+    catch (err) { 
+        console.error("DB Error:", err.message);
+        throw err; 
+    }
 };
 connectDB();
 
@@ -41,16 +47,22 @@ app.post('/api/', async (req,res)=>{
 app.post('/api/newreg', async (req, res) => {
   let { name, email, t1, gender, phone, aphone, address } = req.body;
   try {
+    if (!name || !email) return res.status(400).json({ message: false, error: "Name and Email are required" });
+    
     if (typeof address === 'object' && address !== null) {
         address = Object.values(address).filter(x => x).join(', ');
     }
-    if (!name || !email) return res.json({ message: false, error: "Missing fields" });
+    
     await connectDB();
     const existingUser = await Users.findOne({ useremail: email });
-    if (existingUser) return res.json({ message: false, error: "User exists" });
+    if (existingUser) return res.json({ message: false, error: "Email already registered" });
+    
     await Users.create({ username: name, useremail: email, password: t1, gender, phone, aphone, address });
     res.json({ message: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { 
+    console.error("Reg Error:", err);
+    res.status(500).json({ message: "Server Registration Error", error: err.message }); 
+  }
 });
 
 app.get('/api/product', async (req,res)=>{
