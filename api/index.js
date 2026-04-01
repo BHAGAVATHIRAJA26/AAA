@@ -4,7 +4,37 @@ const crypto = require("crypto");
 const cors = require('cors');
 const axios = require("axios");
 const mongoose = require('mongoose');
-const { Users, Products, tdata } = require('./mongodb.js');
+const userSchema = new mongoose.Schema({
+  username: String,
+  useremail: String,
+  password: String,
+  gender:String,
+  phone:String,
+  aphone:String,
+  address:String,
+});
+
+const productSchema = new mongoose.Schema({
+  name: String,
+  url: String,
+  public_id: String,
+  desc: String,
+  cos: Number,
+  dis: Number,
+  nop: Number,
+  mob: Number
+});
+
+const tdataSchema =new mongoose.Schema({
+  uid:String,
+  url:String,
+  desc:String,
+  cos:Number,
+  dis:Number
+})
+const Users = mongoose.model("usernames", userSchema);
+const Products = mongoose.model("products", productSchema);
+const tdata=mongoose.model("tdatas",tdataSchema);
 const multer = require('multer');
 const path = require('path');
 const dotenv = require("dotenv");
@@ -144,6 +174,11 @@ app.post('/api/passch', async (req, res) => {
     console.error('Passch Error:', err);
     res.status(500).json({ error: err.message, htiResults: null });
   }
+});
+
+// Vercel route diagnostics
+app.use('*', (req, res) => {
+    res.status(404).json({ error: "Route not found in Express", url: req.url, originalUrl: req.originalUrl });
 });
 
 module.exports = app;
