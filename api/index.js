@@ -24,17 +24,19 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const connectDB = async () => {
     if (mongoose.connection.readyState >= 1) return;
-    try { 
-        if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI missing in ENV");
-        await mongoose.connect(process.env.MONGODB_URI); 
+    if (!process.env.MONGODB_URI) {
+        console.error("DB Error: MONGODB_URI missing in ENV");
+        throw new Error("MONGODB_URI missing in ENV");
     }
-    catch (err) { 
-        console.error("DB Error:", err.message);
+    try { 
+        await mongoose.connect(process.env.MONGODB_URI); 
+    } catch (err) { 
+        console.error("DB Connect Error:", err.message);
         throw err; 
     }
 };
-connectDB();
 
+// DO NOT call connectDB() at the top level to prevent Vercel boot crashes
 app.get('/api/health', (req, res) => res.json({ status: "UP", db: mongoose.connection.readyState }));
 app.get('/api/', (req, res) => res.send("API Live"));
 
@@ -126,6 +128,22 @@ app.post("/api/verify-payment", (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
   const h = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET).update(razorpay_order_id + "|" + razorpay_payment_id).digest("hex");
   res.json({ success: h === razorpay_signature });
+});
+
+// Password change route
+app.post('/api/passch', async (req, res) => {
+  const { name, newpassword } = req.body;
+  try {
+    await connectDB();
+    const user = await Users.findOne({ useremail: name });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    user.password = newpassword;
+    await user.save();
+    res.json({ message: true, htiResults: 'Password updated' });
+  } catch (err) {
+    console.error('Passch Error:', err);
+    res.status(500).json({ error: err.message, htiResults: null });
+  }
 });
 
 module.exports = app;
