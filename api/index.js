@@ -73,7 +73,7 @@ app.get('/api/', (req, res) => res.send("API Live"));
 app.post('/api/', async (req,res)=>{
     const {name,password}=req.body;
     try { await connectDB(); const d = await Users.findOne({useremail:name, password:password}); res.json({ message: !!d, id: d ? d._id : 0}); }
-    catch(err) { res.status(500).json({ error: err.message }); }
+    catch(err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post('/api/newreg', async (req, res) => {
@@ -93,38 +93,38 @@ app.post('/api/newreg', async (req, res) => {
     res.json({ message: true });
   } catch (err) { 
     console.error("Reg Error:", err);
-    res.status(500).json({ message: "Server Registration Error", error: err.message }); 
+    res.status(400).json({ message: "Server Registration Error", error: err.message }); 
   }
 });
 
 app.get('/api/product', async (req,res)=>{
     try { await connectDB(); const d = await Products.find(); res.json(d); }
-    catch(err) { res.status(500).json({ error: err.message }); }
+    catch(err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post('/api/perinf', async (req,res)=>{
     try { await connectDB(); const d = await Users.findById(req.body); res.json(d); }
-    catch(err) { res.status(500).json({ error: err.message }); }
+    catch(err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post('/api/product', async (req,res)=>{
     try { await connectDB(); const d = await Products.find({desc: { $regex: req.body, $options: 'i' }}); res.json(d); }
-    catch(err) { res.status(500).json({ error: err.message }); }
+    catch(err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post("/api/Card", async (req, res) => {
   try { await connectDB(); const d = await tdata.find({ uid: req.body.id }); res.json(d); }
-  catch (err) { res.status(500).json({ error: err.message }); }
+  catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post("/api/Cardre", async (req,res) =>{
     try { await connectDB(); await tdata.deleteOne({ _id: req.body.id }); res.json({ message: true }); }
-    catch (err) { res.status(500).json({ error: err.message }); }
+    catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 app.get('/api/product/:id', async (req,res)=>{
     try { await connectDB(); const d = await Products.findById(req.params.id); res.json(d); }
-    catch(err) { res.status(500).json({ error: err.message }); }
+    catch(err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post("/api/Sell", upload.single("img"), async (req, res) => {
@@ -137,12 +137,12 @@ app.post("/api/Sell", upload.single("img"), async (req, res) => {
     const p = new Products({ name: result.original_filename, url: result.secure_url, public_id: result.public_id, ...req.body });
     await p.save();
     res.json({ message: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post("/api/itdata", async (req,res)=>{
     try { await connectDB(); await tdata.create({uid:req.body.id, ...req.body}); res.json({ message: true }); }
-    catch (err) { res.status(500).json({ error: err.message }); }
+    catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post("/api/create-order", async (req, res) => {
@@ -151,7 +151,7 @@ app.post("/api/create-order", async (req, res) => {
       amount: req.body.amount * 100, currency: "INR", receipt: "r_" + Date.now()
     });
     res.json(o);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 app.post("/api/verify-payment", (req, res) => {
@@ -172,7 +172,7 @@ app.post('/api/passch', async (req, res) => {
     res.json({ message: true, htiResults: 'Password updated' });
   } catch (err) {
     console.error('Passch Error:', err);
-    res.status(500).json({ error: err.message, htiResults: null });
+    res.status(400).json({ error: err.message, htiResults: null });
   }
 });
 
