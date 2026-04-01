@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "bst-unified-v1",
   "rewrites": [
     {
       "source": "/api/(.*)",
