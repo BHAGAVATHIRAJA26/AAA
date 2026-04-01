@@ -20,7 +20,7 @@ function Detail(){
 
         function c1(url,desc,cos,dis){
       
-      axios.post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/itdata",{id,url,desc,cos,dis})
+      axios.post("/api/itdata",{id,url,desc,cos,dis})
       .then((response)=>{
         console.log(response.data.message)
       });
@@ -32,7 +32,7 @@ function Detail(){
         
           
  useEffect(()=>{
-      axios.post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/perinf",id,{
+      axios.post("/api/perinf",id,{
            
   headers: { "Content-Type": "text/plain" }})
       .then((response)=>{
@@ -47,7 +47,7 @@ function Detail(){
 
     
             useEffect(()=>{
-      axios.get(`${(import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500"))}/product/${did}`)
+      axios.get(`/api/product/${did}`)
         .then((response)=>{
         setA(response.data);
       

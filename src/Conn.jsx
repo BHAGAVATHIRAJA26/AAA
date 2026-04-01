@@ -25,7 +25,7 @@ function Conn(){
     }
     function sea(){
       
-      axios.post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/product",se,{
+      axios.post("/api/product",se,{
            
   headers: { "Content-Type": "text/plain" }})
         .then((response)=>{
@@ -55,7 +55,7 @@ function Conn(){
 
     function c1(url,desc,cos,dis){
       
-      axios.post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/itdata",{id,url,desc,cos,dis})
+      axios.post("/api/itdata",{id,url,desc,cos,dis})
       .then((response)=>{
         console.log(response.data.message)
       });
@@ -66,14 +66,14 @@ function Conn(){
 
 
     useEffect(()=>{
-      axios.get((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/product")
+      axios.get("/api/product")
         .then((response)=>{
         setA(response.data);
         })
         .catch(error=>console.error(error));
     },[]);
     useEffect(()=>{
-      axios.post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/perinf",id,{
+      axios.post("/api/perinf",id,{
            
   headers: { "Content-Type": "text/plain" }})
       .then((response)=>{

@@ -71,7 +71,7 @@ function Sell() {
         formData.append("mob", mob);
         e.preventDefault();
          axios
-        .post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/Sell",formData, {
+        .post("/api/Sell",formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
         .then((response) => {
@@ -91,7 +91,7 @@ function Sell() {
 
 
     useEffect(()=>{
-      axios.post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/perinf",id,{
+      axios.post("/api/perinf",id,{
            
   headers: { "Content-Type": "text/plain" }})
       .then((response)=>{

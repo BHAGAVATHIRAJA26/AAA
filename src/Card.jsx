@@ -13,7 +13,7 @@ function Card(){
           useEffect(()=>{
             console.log(id)
           axios
-      .post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/Card", {id})
+      .post("/api/Card", {id})
       .then((response) => {
         console.log(response.data)
         setA(response.data); })
@@ -29,7 +29,7 @@ function Card(){
           function remov(id){
             
 
-      axios.post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/Cardre", {id})
+      axios.post("/api/Cardre", {id})
       .then((response) => {
         console.log(response.data)
          })
@@ -54,7 +54,7 @@ function Card(){
 
 
           useEffect(()=>{
-      axios.post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/perinf",id,{
+      axios.post("/api/perinf",id,{
            
   headers: { "Content-Type": "text/plain" }})
       .then((response)=>{
@@ -79,7 +79,7 @@ function Card(){
             const payNow = async () => {
     // 1️⃣ Create order
     const { data: order } = await axios.post(
-      (import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/create-order",
+      "/api/create-order",
       { amount: t }
     );
 
@@ -101,7 +101,7 @@ function Card(){
       handler: async function (response) {
         // 3️⃣ Verify payment
         const verify = await axios.post(
-          (import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/verify-payment",
+          "/api/verify-payment",
           response
         );
 

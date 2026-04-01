@@ -37,7 +37,7 @@ function Abc(){
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       try {
-        const res = await fetch((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/get-address", {
+        const res = await fetch("/api/get-address", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -70,7 +70,7 @@ function Abc(){
         }
         e.preventDefault();
          axios
-        .post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/newreg", {name,email,t1,gender,phone,aphone,address:fll})
+        .post("/api/newreg", {name,email,t1,gender,phone,aphone,address:fll})
         .then((response) => {
           if(response.data.message==true && !z1){
               alert("Regisration is successfully completed")

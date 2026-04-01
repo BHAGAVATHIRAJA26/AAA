@@ -20,7 +20,7 @@ function App() {
     function handleSubmit(e){
         e.preventDefault(); 
     axios
-      .post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/", { name,password })
+      .post("/api/", { name,password })
       .then((response) => {
         setp1(response.data.message); 
       
@@ -40,7 +40,7 @@ function App() {
 
   function ibh(){
     axios
-      .post((import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/passch", { name,newpassword:t1})
+      .post("/api/passch", { name,newpassword:t1})
       .then((response) => {
         if(response.data.message){
           alert("Successfully password Changed")
@@ -85,7 +85,7 @@ function App() {
       const email = userInfo.data.email;
 
       const res = await axios.post(
-        (import.meta.env.VITE_API_URL || (import.meta.env.VITE_API_URL || "http://localhost:3500")) + "/google-login",
+        "/api/google-login",
         { email }
       );
 
