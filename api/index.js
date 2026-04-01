@@ -46,7 +46,7 @@ const app = express();
 const port = process.env.PORT || 3500;
 
 app.use(cors({ origin: true, credentials: true }));
-app.options('*', cors());
+app.options('/{*path}', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -177,7 +177,7 @@ app.post('/api/passch', async (req, res) => {
 });
 
 // Vercel route diagnostics
-app.use('*', (req, res) => {
+app.use('/{*path}', (req, res) => {
     res.status(404).json({ error: "Route not found in Express", url: req.url, originalUrl: req.originalUrl });
 });
 
