@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "bs-traders-v2",
+  "name": "bst-unified-v1",
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -9,19 +9,6 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
-    }
-  ],
-  "builds": [
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
     }
   ]
 }
