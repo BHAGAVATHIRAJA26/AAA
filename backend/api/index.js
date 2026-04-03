@@ -42,6 +42,12 @@ const cloudinary = require("cloudinary").v2;
 
 dotenv.config();
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 const app = express();
 const port = process.env.PORT || 3500;
 
@@ -67,16 +73,16 @@ const connectDB = async () => {
 };
 
 // DO NOT call connectDB() at the top level to prevent Vercel boot crashes
-app.get('/api/health', (req, res) => res.json({ status: "UP", db: mongoose.connection.readyState }));
-app.get('/api/', (req, res) => res.send("API Live"));
+app.get('/health', (req, res) => res.json({ status: "UP", db: mongoose.connection.readyState }));
+app.get('/', (req, res) => res.send("API Live"));
 
-app.post('/api/', async (req,res)=>{
+app.post('/', async (req,res)=>{
     const {name,password}=req.body;
     try { await connectDB(); const d = await Users.findOne({useremail:name, password:password}); res.json({ message: !!d, id: d ? d._id : 0}); }
     catch(err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post('/api/newreg', async (req, res) => {
+app.post('/newreg', async (req, res) => {
   let { name, email, t1, gender, phone, aphone, address } = req.body;
   try {
     if (!name || !email) return res.status(400).json({ message: false, error: "Name and Email are required" });
@@ -97,37 +103,37 @@ app.post('/api/newreg', async (req, res) => {
   }
 });
 
-app.get('/api/product', async (req,res)=>{
+app.get('/product', async (req,res)=>{
     try { await connectDB(); const d = await Products.find(); res.json(d); }
     catch(err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post('/api/perinf', async (req,res)=>{
+app.post('/perinf', async (req,res)=>{
     try { await connectDB(); const d = await Users.findById(req.body); res.json(d); }
     catch(err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post('/api/product', async (req,res)=>{
+app.post('/product', async (req,res)=>{
     try { await connectDB(); const d = await Products.find({desc: { $regex: req.body, $options: 'i' }}); res.json(d); }
     catch(err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post("/api/Card", async (req, res) => {
+app.post("/Card", async (req, res) => {
   try { await connectDB(); const d = await tdata.find({ uid: req.body.id }); res.json(d); }
   catch (err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post("/api/Cardre", async (req,res) =>{
+app.post("/Cardre", async (req,res) =>{
     try { await connectDB(); await tdata.deleteOne({ _id: req.body.id }); res.json({ message: true }); }
     catch (err) { res.status(400).json({ error: err.message }); }
 });
 
-app.get('/api/product/:id', async (req,res)=>{
+app.get('/product/:id', async (req,res)=>{
     try { await connectDB(); const d = await Products.findById(req.params.id); res.json(d); }
     catch(err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post("/api/Sell", upload.single("img"), async (req, res) => {
+app.post("/Sell", upload.single("img"), async (req, res) => {
   try {
     await connectDB();
     const result = await new Promise((resolve, reject) => {
@@ -140,12 +146,12 @@ app.post("/api/Sell", upload.single("img"), async (req, res) => {
   } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post("/api/itdata", async (req,res)=>{
+app.post("/itdata", async (req,res)=>{
     try { await connectDB(); await tdata.create({uid:req.body.id, ...req.body}); res.json({ message: true }); }
     catch (err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post("/api/create-order", async (req, res) => {
+app.post("/create-order", async (req, res) => {
   try {
     const o = await new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET }).orders.create({
       amount: req.body.amount * 100, currency: "INR", receipt: "r_" + Date.now()
@@ -154,14 +160,14 @@ app.post("/api/create-order", async (req, res) => {
   } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
-app.post("/api/verify-payment", (req, res) => {
+app.post("/verify-payment", (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
   const h = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET).update(razorpay_order_id + "|" + razorpay_payment_id).digest("hex");
   res.json({ success: h === razorpay_signature });
 });
 
 // Password change route
-app.post('/api/passch', async (req, res) => {
+app.post('/passch', async (req, res) => {
   const { name, newpassword } = req.body;
   try {
     await connectDB();
